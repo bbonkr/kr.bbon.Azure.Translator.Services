@@ -184,6 +184,11 @@ namespace kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.Translati
         /// Translation job id
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Translation job Uri
+        /// </summary>
+        public string OperationLocation { get; set; }
     }
 
     //public class ErrorResponseModel

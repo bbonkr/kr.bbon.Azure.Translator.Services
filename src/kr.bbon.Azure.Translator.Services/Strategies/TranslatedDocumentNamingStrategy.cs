@@ -18,7 +18,7 @@ namespace kr.bbon.Azure.Translator.Services.Strategies
             var (fileName, extension) = GetNameToken(name);
             var delimiter = string.IsNullOrWhiteSpace(extension) ? "" : ".";
             
-            return $"{fileName}{delimiter}{extension}";
+            return $"{fileName}.{languageCode.ToLower()}{delimiter}{extension}";
         }
 
         private (string FileName, string Extension) GetNameToken(string name)

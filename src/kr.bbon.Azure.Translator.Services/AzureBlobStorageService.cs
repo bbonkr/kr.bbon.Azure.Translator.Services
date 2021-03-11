@@ -27,10 +27,13 @@ namespace kr.bbon.Azure.Translator.Services
 
         Task<BlobCreateResultModel> CreateAsync(string name, string contents, string contentType, CancellationToken cancellationToken = default);
 
-
         Task<bool> DeleteAsync(string name, CancellationToken cancellationToken = default);
 
-        string GenerateSasUri(string name, string storedPolicyName = "");
+        string GenerateBlobSasUri(string name, string storedPolicyName = "");
+
+        string GenerateContainerSasUri(string storedPolicyName = "");
+
+        Task<Stream> LoadBlob(string name);
     }
 
    
@@ -87,7 +90,7 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        public string GenerateSasUri(string name, string storedPolicyName = "")
+        public string GenerateBlobSasUri(string name, string storedPolicyName = "")
         {
             var message = "";
             var blobClient = client.GetBlobClient(name);
@@ -113,7 +116,7 @@ namespace kr.bbon.Azure.Translator.Services
             if (string.IsNullOrWhiteSpace(storedPolicyName))
             {
                 builder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
-                builder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
+                builder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.List | BlobSasPermissions.Write);
             }
             else
             {
@@ -121,6 +124,43 @@ namespace kr.bbon.Azure.Translator.Services
             }
 
             var sasUri = blobClient.GenerateSasUri(builder);
+
+            return sasUri.ToString();
+        }
+
+        public string GenerateContainerSasUri(string storedPolicyName = "")
+        {
+            var message = "";
+
+            if (!client.CanGenerateSasUri)
+            {
+                message = "Could not generate the SAS uri.";
+                throw new ApiHttpStatusException<ErrorModel<int>>(HttpStatusCode.BadRequest, message, new ErrorModel<int>
+                {
+                    Code = (int)HttpStatusCode.NotAcceptable,
+                    Message = message,
+                });
+            }
+
+            var builder = new BlobSasBuilder()
+            {
+                BlobContainerName = client.Name,
+                Resource = "c",
+            };
+
+
+            if (string.IsNullOrWhiteSpace(storedPolicyName))
+            {
+                builder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
+                builder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
+            }
+            else
+            {
+                builder.Identifier = storedPolicyName;
+            }
+
+            var sasUri = client.GenerateSasUri(builder);
+
 
             return sasUri.ToString();
         }
@@ -167,10 +207,13 @@ namespace kr.bbon.Azure.Translator.Services
                 {
                     await writer.WriteAsync(contents);
                     await writer.FlushAsync();
-                    writer.Close();
-                }
+                    
+                    stream.Position = 0;
 
-                result = await CreateAsync(name, stream, contentType, cancellationToken);
+                    result = await CreateAsync(name, stream, contentType, cancellationToken);
+
+                    writer.Close();
+                }                
 
                 stream.Close();
             }
@@ -212,6 +255,19 @@ namespace kr.bbon.Azure.Translator.Services
 
                 throw;
             }
+        }
+
+        public async Task<Stream> LoadBlob(string name)
+        {
+            var blobClient = client.GetBlobClient(name);
+
+            if (await blobClient.ExistsAsync())
+            {
+                var result = await blobClient.DownloadAsync();
+                return result.Value.Content;
+            }
+
+            return null;
         }
 
         private void EnsureContainerCreated()
