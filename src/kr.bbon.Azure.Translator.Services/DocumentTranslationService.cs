@@ -52,7 +52,7 @@ namespace kr.bbon.Azure.Translator.Services
                     request.RequestUri = new Uri(GetApiUrl());
 
                     request.Headers.Add(OCP_APIM_SUBSCRIPTION_KEY, options.SubscriptionKey);
-                    request.Headers.Add(OCP_APIM_SUBSCRIPTION_REGION, options.Region);
+                    //request.Headers.Add(OCP_APIM_SUBSCRIPTION_REGION, options.Region);
 
                     request.Content = new StringContent(requestBody, Encoding.UTF8, CONTENT_TYPE_VALUE);
 
@@ -74,7 +74,8 @@ namespace kr.bbon.Azure.Translator.Services
                         {
                             result = response.Headers.GetValues("Operation-Location").Select(operationLocation => new ResponseModel
                             {
-                                Id = operationLocation,
+                                Id = operationLocation.Split('/').Last(),
+                                OperationLocation = operationLocation,
                             }).FirstOrDefault();
                         }
                         else
@@ -160,7 +161,10 @@ namespace kr.bbon.Azure.Translator.Services
                     {
                         logger.LogInformation($"${Tag} The request has been processed. => Translated.");
 
-                        result = JsonSerializer.Deserialize<JobStatusResponseModel>(resultJson);
+                        result = JsonSerializer.Deserialize<JobStatusResponseModel>(resultJson, new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        });
                     }
                     else
                     {
