@@ -1,10 +1,10 @@
-# kr.bbon.Azure.Translator.Services
+# kr.bbon.Azure.Translator.Services Package
 
 [![](https://img.shields.io/nuget/v/kr.bbon.Azure.Translator.Services)](https://www.nuget.org/packages/kr.bbon.Azure.Translator.Services) [![](https://img.shields.io/nuget/dt/kr.bbon.Azure.Translator.Services)](https://www.nuget.org/packages/kr.bbon.Azure.Translator.Services) [![publish to nuget](https://github.com/bbonkr/kr.bbon.Azure.Translator.Services/actions/workflows/main.yml/badge.svg)](https://github.com/bbonkr/kr.bbon.Azure.Translator.Services/actions/workflows/main.yml)
 
 ## 개요
 
-Azure Traslator 를 사용한 번역 서비스입니다.
+Azure Translator 를 사용한 번역 서비스입니다.
 
 ## 사전요구사항
 
