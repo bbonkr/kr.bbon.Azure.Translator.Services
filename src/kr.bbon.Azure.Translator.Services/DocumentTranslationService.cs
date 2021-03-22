@@ -22,6 +22,8 @@ namespace kr.bbon.Azure.Translator.Services
         Task<ResponseModel> RequestTranslation(RequestModel model, CancellationToken cancellationToken = default);
 
         Task<JobStatusResponseModel> GetJobStatusAsync(string id, CancellationToken cancellationToken = default);
+
+        Task<JobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default);
     }
 
     public class DocumentTranslationService : TranslatorServiceBase, IDocumentTranslationService
@@ -198,7 +200,80 @@ namespace kr.bbon.Azure.Translator.Services
             return result;
         }
 
-        private void ValidateRequestbody(Models.DocumentTranslation.TranslationRequest.RequestModel model)
+        public async Task<JobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var message = "";
+            JobStatusResponseModel result;
+
+            ValidateAzureTranslateConnectionOptions();            
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                message = $"{nameof(id)} is required";
+                throw new ApiHttpStatusException<ErrorModel<int>>(HttpStatusCode.BadRequest, message, new ErrorModel<int>
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    Message = message,
+                });
+            }
+
+            using (var client = new HttpClient())
+            {
+                using (var request = new HttpRequestMessage())
+                {
+                    request.Method = HttpMethod.Delete;
+                    request.RequestUri = new Uri($"{GetApiUrl()}/{id}");
+
+                    request.Headers.Add(OCP_APIM_SUBSCRIPTION_KEY, options.SubscriptionKey);
+                    request.Headers.Add(OCP_APIM_SUBSCRIPTION_REGION, options.Region);
+
+                    var response = await client.SendAsync(request, cancellationToken);
+
+                    var resultJson = await response.Content?.ReadAsStringAsync();
+                    var responseContentType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        logger.LogInformation($"${Tag} The request has been processed. => Cancelled.");
+
+                        result = JsonSerializer.Deserialize<JobStatusResponseModel>(resultJson, new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        });
+                    }
+                    else
+                    {
+                        ErrorResponseModel errorResult;
+
+                        if (responseContentType.EndsWith("/json", StringComparison.OrdinalIgnoreCase))
+                        {
+                            errorResult = JsonSerializer.Deserialize<ErrorResponseModel>(resultJson);
+
+                            logger.LogInformation($"${Tag} The request does not has been processed. => Not cancelled.");
+                        }
+                        else
+                        {
+                            errorResult = new ErrorResponseModel
+                            {
+                                Error = new ErrorModel<int>
+                                {
+                                    Code = (int)response.StatusCode,
+                                    Message = response.ReasonPhrase,
+                                }
+                            };
+
+                            logger.LogInformation($"${Tag} The request does not has been processed. => Server error.");
+                        }
+
+                        throw new ApiHttpStatusException<ErrorModel<int>>(response.StatusCode, errorResult.Error.Message, errorResult.Error);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void ValidateRequestbody(RequestModel model)
         {
             var errors = new List<string>();
 
