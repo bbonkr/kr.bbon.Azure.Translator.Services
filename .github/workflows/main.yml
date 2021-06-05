@@ -53,7 +53,7 @@ jobs:
 
           # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
           # INCLUDE_SYMBOLS: false
-      - name: get version
+      - name: package-version
         run: grep '<Version>' < src/kr.bbon.Azure.Translator.Services/kr.bbon.Azure.Translator.Services.csproj | PACKAGE_VERSION=$(sed 's/.*<Version>\(.*\)<\/Version>/\1/') >> $GITHUB_ENV
       - name: package-version-to-git-tag
         uses: pkgdeps/git-tag-action@v2
