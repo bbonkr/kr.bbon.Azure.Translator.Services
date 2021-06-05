@@ -18,7 +18,7 @@ namespace kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobSta
         public const string ValidationFailed = "ValidationFailed";
     }
 
-    public class JobStatusResponseModel
+    public class DocumentTranslationJobStatusResponseModel
     {
         /// <summary>
         /// 작업의 Id입니다.

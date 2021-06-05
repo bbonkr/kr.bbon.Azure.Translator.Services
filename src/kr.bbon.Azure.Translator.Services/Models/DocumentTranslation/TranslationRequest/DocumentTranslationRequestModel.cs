@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest
 {
 
-    public class RequestModel
+    public class DocumentTranslationRequestModel
     {
         /// <summary>
         /// 문서 또는 문서를 포함 하는 폴더의 입력 목록
@@ -178,7 +178,7 @@ namespace kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.Translati
         public static string Folder = "Folder";
     }
 
-    public class ResponseModel
+    public class DocumentTranslationResponseModel
     {
         /// <summary>
         /// Translation job id
@@ -190,9 +190,4 @@ namespace kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.Translati
         /// </summary>
         public string OperationLocation { get; set; }
     }
-
-    //public class ErrorResponseModel
-    //{
-    //    public ErrorModel<int> Error { get; set; }
-    //}
 }
