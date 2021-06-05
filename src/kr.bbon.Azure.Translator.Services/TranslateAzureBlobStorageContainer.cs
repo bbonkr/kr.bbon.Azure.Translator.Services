@@ -6,11 +6,11 @@
         public abstract string GetContainerName();
     }
 
-    public class TranslateAzureBlobStorageContainer : AzureBlobStorageContainerBase
+    public class DocumentTranslationAzureBlobStorageContainer : AzureBlobStorageContainerBase
     {
         public override string GetContainerName()
         {
-            return "document-translation-sample";
+            return "document-translation";
         }
     }
 

@@ -12,7 +12,7 @@ namespace kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRe
     /// </summary>
     public record Input(string Text);
 
-    public class RequestModel
+    public class TextTranslationRequestModel
     {
         /// <summary>
         /// Required
@@ -82,7 +82,7 @@ namespace kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRe
         public bool IsTranslationEachLanguage { get; init; } = false;
     }
 
-    public class ResponseModel
+    public class TextTranslationResponseModel
     {
         public DetectedLanguage DetectedLanguage { get; set; }
         public TextResult SourceText { get; set; }

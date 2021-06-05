@@ -76,17 +76,17 @@ appsettings.json 에서 설정을 제공합니다.
 ### 구성
 
 ```csharp
+
+IConfiguration Configuration { get;}
+
 // ConfigureServices method in Startup class
 public void ConfigureServices(IServiceCollection services)
 {
-    // bind setting values
-    services.Configure<AzureTranslatorConnectionOptions>(Configuration.GetSection(AzureTranslatorConnectionOptions.Name));
-    services.Configure<AzureStorageOptions>(Configuration.GetSection(AzureStorageOptions.Name));
-
-    // register dependencies
-    services.AddTransient<IStorageService<TranslateAzureBlobStorageContainer>, AzureBlobStorageService<TranslateAzureBlobStorageContainer>>();
-    services.AddTransient<ITextTranslatorService, TextTranslatorService>();
-    services.AddTransient<IDocumentTranslationService, DocumentTranslationService>();
-    services.AddTransient<ITranslatedDocumentNamingStrategy, TranslatedDocumentNamingStrategy>();
+    // register dependencies    
+    services.AddAzureTranslatorServices(Configuration);
 }
 ```
+
+## 예제
+
+예제는 [bbonkr/Sample.Azure.Translator](https://github.com/bbonkr/Sample.Azure.Translator) 페이지를 참조하세요.

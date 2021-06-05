@@ -17,7 +17,7 @@ namespace kr.bbon.Azure.Translator.Services
 {
     public interface ITextTranslatorService
     {
-        Task<IEnumerable<ResponseModel>> TranslateAsync(RequestModel model);
+        Task<IEnumerable<TextTranslationResponseModel>> TranslateAsync(TextTranslationRequestModel model);
     }
 
     public class TextTranslatorService : TranslatorServiceBase, ITextTranslatorService
@@ -26,19 +26,19 @@ namespace kr.bbon.Azure.Translator.Services
         protected override string Route { get => "/translate?api-version=3.0"; }
 
         public TextTranslatorService(
-            IOptionsMonitor<AzureTranslatorConnectionOptions> azureTranslatorConnectionOptionsAccessor, 
+            IOptionsMonitor<AzureTranslatorOptions> azureTranslatorConnectionOptionsAccessor, 
             ILoggerFactory loggerFactory)
             : base(azureTranslatorConnectionOptionsAccessor)
         {
             logger = loggerFactory.CreateLogger<TextTranslatorService>();
         }
 
-        public async Task<IEnumerable<ResponseModel>> TranslateAsync(RequestModel model)
+        public async Task<IEnumerable<TextTranslationResponseModel>> TranslateAsync(TextTranslationRequestModel model)
         {
             ValidateAzureTranslateConnectionOptions();
             ValidateRequestbody(model);
 
-            List<ResponseModel> resultSet = null;
+            List<TextTranslationResponseModel> resultSet = null;
 
             var requestBody = SerializeToJson(model.Inputs);
 
@@ -72,13 +72,13 @@ namespace kr.bbon.Azure.Translator.Services
 
                         if (response.IsSuccessStatusCode)
                         {
-                            var resultModel = JsonSerializer.Deserialize<IEnumerable<Models.TextTranslation.TranslationRequest.ResponseModel>>(resultJson, jsonSerializerOptions);
+                            var resultModel = JsonSerializer.Deserialize<IEnumerable<Models.TextTranslation.TranslationRequest.TextTranslationResponseModel>>(resultJson, jsonSerializerOptions);
 
                             logger.LogInformation($"${Tag} The request has been processed. => Translated.");
 
                             if (resultSet == null)
                             {
-                                resultSet = new List<Models.TextTranslation.TranslationRequest.ResponseModel>(resultModel);
+                                resultSet = new List<Models.TextTranslation.TranslationRequest.TextTranslationResponseModel>(resultModel);
                             }
                             else
                             {
@@ -113,7 +113,7 @@ namespace kr.bbon.Azure.Translator.Services
             return resultSet;
         }
 
-        private IEnumerable<Uri> getRequestUri(RequestModel model)
+        private IEnumerable<Uri> getRequestUri(TextTranslationRequestModel model)
         {
             if (model.IsTranslationEachLanguage)
             {
@@ -128,7 +128,7 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        private Uri getRequestUri(RequestModel model, string languageCode = "")
+        private Uri getRequestUri(TextTranslationRequestModel model, string languageCode = "")
         {
             var url = GetApiUrl();
 
@@ -173,7 +173,7 @@ namespace kr.bbon.Azure.Translator.Services
             return requestUri;
         }
 
-        private void ValidateRequestbody(RequestModel model)
+        private void ValidateRequestbody(TextTranslationRequestModel model)
         {
             var message = "";
             var errorMessage = new List<string>();
