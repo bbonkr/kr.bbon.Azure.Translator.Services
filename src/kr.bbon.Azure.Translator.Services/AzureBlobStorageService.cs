@@ -19,7 +19,7 @@ using kr.bbon.Azure.Translator.Services.Models.AzureStorage.Blob;
 
 namespace kr.bbon.Azure.Translator.Services
 {
-    public interface IStorageService<T>
+    public interface IStorageService
     {
         Task<BlobCreateResultModel> FindByNameAsync(string name, CancellationToken cancellationToken = default);
 
@@ -37,15 +37,18 @@ namespace kr.bbon.Azure.Translator.Services
     }
 
    
-    public class AzureBlobStorageService<T> : IStorageService<T> where T: AzureBlobStorageContainerBase
+    public class AzureBlobStorageService : IStorageService
     {
-        public AzureBlobStorageService(IOptionsMonitor<AzureStorageOptions> azureStorageOptionsAccessor, ILoggerFactory loggerFactory)
+        public AzureBlobStorageService(
+            AzureBlobStorageContainerBase azureBlobStorageContainer,
+            IOptionsMonitor<AzureStorageOptions> azureStorageOptionsAccessor, 
+            ILoggerFactory loggerFactory)
         {
-            this.options = azureStorageOptionsAccessor.CurrentValue;
-            this.logger = loggerFactory.CreateLogger<AzureBlobStorageService<T>>();
+            this.azureBlobStorageContainer = azureBlobStorageContainer;
+            this.options = azureStorageOptionsAccessor.CurrentValue ?? throw new ArgumentException($"Does not configure 'AzureStorage' at appsettings. See AzureBlobStorageOptions information.");
+            this.logger = loggerFactory.CreateLogger<AzureBlobStorageService>();
 
-            var container = Activator.CreateInstance<T>();
-            this.client = new BlobContainerClient(options.ConnectionString, container.GetContainerName());
+            this.client = new BlobContainerClient(options.ConnectionString, azureBlobStorageContainer.GetContainerName());
         }
 
         public async Task<BlobCreateResultModel> FindByNameAsync(string name, CancellationToken cancellationToken = default)
@@ -277,9 +280,7 @@ namespace kr.bbon.Azure.Translator.Services
 
         private readonly AzureStorageOptions options;
         private readonly BlobContainerClient client;
+        private readonly AzureBlobStorageContainerBase azureBlobStorageContainer;
         private readonly ILogger logger;
     }
-
-
-
 }

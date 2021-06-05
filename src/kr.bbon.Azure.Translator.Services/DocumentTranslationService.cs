@@ -19,29 +19,29 @@ namespace kr.bbon.Azure.Translator.Services
 {
     public interface IDocumentTranslationService
     {
-        Task<ResponseModel> RequestTranslation(RequestModel model, CancellationToken cancellationToken = default);
+        Task<DocumentTranslationResponseModel> RequestTranslation(DocumentTranslationRequestModel model, CancellationToken cancellationToken = default);
 
-        Task<JobStatusResponseModel> GetJobStatusAsync(string id, CancellationToken cancellationToken = default);
+        Task<DocumentTranslationJobStatusResponseModel> GetJobStatusAsync(string id, CancellationToken cancellationToken = default);
 
-        Task<JobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default);
+        Task<DocumentTranslationJobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default);
     }
 
     public class DocumentTranslationService : TranslatorServiceBase, IDocumentTranslationService
     {
         public DocumentTranslationService(
-            IOptionsMonitor<AzureTranslatorConnectionOptions> azureTranslatorConnectionOptionsAccessor,
+            IOptionsMonitor<AzureTranslatorOptions> azureTranslatorConnectionOptionsAccessor,
             ILoggerFactory loggerFactory)
             : base(azureTranslatorConnectionOptionsAccessor)
         {
             logger = loggerFactory.CreateLogger<DocumentTranslationService>();
         }
 
-        public async Task<ResponseModel> RequestTranslation(RequestModel model, CancellationToken cancellationToken = default)
+        public async Task<DocumentTranslationResponseModel> RequestTranslation(DocumentTranslationRequestModel model, CancellationToken cancellationToken = default)
         {
             ValidateAzureTranslateConnectionOptions();
             ValidateRequestbody(model);
 
-            ResponseModel result = null;
+            DocumentTranslationResponseModel result = null;
 
             var requestBody = SerializeToJson(model);
 
@@ -74,7 +74,7 @@ namespace kr.bbon.Azure.Translator.Services
 
                         if (response.Headers.Contains("Operation-Location"))
                         {
-                            result = response.Headers.GetValues("Operation-Location").Select(operationLocation => new ResponseModel
+                            result = response.Headers.GetValues("Operation-Location").Select(operationLocation => new DocumentTranslationResponseModel
                             {
                                 Id = operationLocation.Split('/').Last(),
                                 OperationLocation = operationLocation,
@@ -127,10 +127,10 @@ namespace kr.bbon.Azure.Translator.Services
             return result;
         }
 
-        public async Task<JobStatusResponseModel> GetJobStatusAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<DocumentTranslationJobStatusResponseModel> GetJobStatusAsync(string id, CancellationToken cancellationToken = default)
         {
             var message = "";
-            JobStatusResponseModel result;
+            DocumentTranslationJobStatusResponseModel result;
 
             ValidateAzureTranslateConnectionOptions();
 
@@ -163,7 +163,7 @@ namespace kr.bbon.Azure.Translator.Services
                     {
                         logger.LogInformation($"${Tag} The request has been processed. => Translated.");
 
-                        result = JsonSerializer.Deserialize<JobStatusResponseModel>(resultJson, new JsonSerializerOptions
+                        result = JsonSerializer.Deserialize<DocumentTranslationJobStatusResponseModel>(resultJson, new JsonSerializerOptions
                         {
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                         });
@@ -200,10 +200,10 @@ namespace kr.bbon.Azure.Translator.Services
             return result;
         }
 
-        public async Task<JobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<DocumentTranslationJobStatusResponseModel> CancelAsync(string id, CancellationToken cancellationToken = default)
         {
             var message = "";
-            JobStatusResponseModel result;
+            DocumentTranslationJobStatusResponseModel result;
 
             ValidateAzureTranslateConnectionOptions();            
 
@@ -236,7 +236,7 @@ namespace kr.bbon.Azure.Translator.Services
                     {
                         logger.LogInformation($"${Tag} The request has been processed. => Cancelled.");
 
-                        result = JsonSerializer.Deserialize<JobStatusResponseModel>(resultJson, new JsonSerializerOptions
+                        result = JsonSerializer.Deserialize<DocumentTranslationJobStatusResponseModel>(resultJson, new JsonSerializerOptions
                         {
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                         });
@@ -273,7 +273,7 @@ namespace kr.bbon.Azure.Translator.Services
             return result;
         }
 
-        private void ValidateRequestbody(RequestModel model)
+        private void ValidateRequestbody(DocumentTranslationRequestModel model)
         {
             var errors = new List<string>();
 
@@ -309,7 +309,7 @@ namespace kr.bbon.Azure.Translator.Services
 
             if (string.IsNullOrWhiteSpace(options.ResourceName))
             {
-                errorMessages.Add($"{nameof(AzureTranslatorConnectionOptions.ResourceName)} is required");
+                errorMessages.Add($"{nameof(AzureTranslatorOptions.ResourceName)} is required");
             }
         }
 

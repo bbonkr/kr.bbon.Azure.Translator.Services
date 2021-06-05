@@ -12,7 +12,7 @@ namespace kr.bbon.Azure.Translator.Services
         protected const string CONTENT_TYPE_KEY = "Content-Type";
         protected const string CONTENT_TYPE_VALUE = "application/json";
 
-        public TranslatorServiceBase(IOptionsMonitor<AzureTranslatorConnectionOptions> azureTranslatorConnectionOptionsAccessor)
+        public TranslatorServiceBase(IOptionsMonitor<AzureTranslatorOptions> azureTranslatorConnectionOptionsAccessor)
         {
             options = azureTranslatorConnectionOptionsAccessor.CurrentValue;
             errorMessages = new List<string>();
@@ -54,17 +54,17 @@ namespace kr.bbon.Azure.Translator.Services
         {
             if (string.IsNullOrWhiteSpace(options.Endpoint))
             {
-                errorMessages.Add($"{nameof(AzureTranslatorConnectionOptions.Endpoint)} is required");
+                errorMessages.Add($"{nameof(AzureTranslatorOptions.Endpoint)} is required");
             }
 
             if (string.IsNullOrWhiteSpace(options.Region))
             {
-                errorMessages.Add($"{nameof(AzureTranslatorConnectionOptions.Region)} is required");
+                errorMessages.Add($"{nameof(AzureTranslatorOptions.Region)} is required");
             }
 
             if (string.IsNullOrWhiteSpace(options.SubscriptionKey))
             {
-                errorMessages.Add($"{nameof(AzureTranslatorConnectionOptions.SubscriptionKey)} is required");
+                errorMessages.Add($"{nameof(AzureTranslatorOptions.SubscriptionKey)} is required");
             }
         }
 
@@ -76,11 +76,11 @@ namespace kr.bbon.Azure.Translator.Services
 
             if (errorMessages.Count > 0)
             {
-                throw new OptionsValidationException(AzureTranslatorConnectionOptions.Name, typeof(AzureTranslatorConnectionOptions), errorMessages);
+                throw new OptionsValidationException(AzureTranslatorOptions.Name, typeof(AzureTranslatorOptions), errorMessages);
             }
         }
 
-        protected readonly AzureTranslatorConnectionOptions options;
+        protected readonly AzureTranslatorOptions options;
         protected readonly IList<string> errorMessages;
     }
 }
