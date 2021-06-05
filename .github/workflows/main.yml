@@ -54,7 +54,8 @@ jobs:
           # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
           # INCLUDE_SYMBOLS: false
       - name: package-version
-        run: grep '<Version>' < src/kr.bbon.Azure.Translator.Services/kr.bbon.Azure.Translator.Services.csproj | "PACKAGE_VERSION=$(sed 's/.*<Version>\(.*\)<\/Version>/\1/')" >> $GITHUB_ENV
+#         run: grep '<Version>' < src/kr.bbon.Azure.Translator.Services/kr.bbon.Azure.Translator.Services.csproj | "PACKAGE_VERSION=$(sed 's/.*<Version>\(.*\)<\/Version>/\1/')" >> $GITHUB_ENV
+        run: echo "PACKAGE_VERSION=${{ steps.publish_nuget.output.version }}" >> $GITHUB_ENV
       - name: confirmation-version  
         run: echo "version=${{env.PACKAGE_VERSION }}"
       - name: package-version-to-git-tag
