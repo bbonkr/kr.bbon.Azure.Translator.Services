@@ -40,7 +40,7 @@ namespace kr.bbon.Azure.Translator.Services
     public class AzureBlobStorageService : IStorageService
     {
         public AzureBlobStorageService(
-            AzureBlobStorageContainerBase azureBlobStorageContainer,
+            IAzureBlobStorageContainer azureBlobStorageContainer,
             IOptionsMonitor<AzureStorageOptions> azureStorageOptionsAccessor, 
             ILoggerFactory loggerFactory)
         {
@@ -280,7 +280,7 @@ namespace kr.bbon.Azure.Translator.Services
 
         private readonly AzureStorageOptions options;
         private readonly BlobContainerClient client;
-        private readonly AzureBlobStorageContainerBase azureBlobStorageContainer;
+        private readonly IAzureBlobStorageContainer azureBlobStorageContainer;
         private readonly ILogger logger;
     }
 }

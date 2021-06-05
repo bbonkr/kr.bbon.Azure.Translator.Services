@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// IServiceCollection extension
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
@@ -77,12 +80,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Add transient service of <see cref="IStorageService"/> with <see cref="AzureBlobStorageContainerBase"/>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TAzureBlobStorageContainer"></typeparam>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddAzureBlobStorage<TAzureBlobStorageContainerBase>(this IServiceCollection services) where TAzureBlobStorageContainerBase : AzureBlobStorageContainerBase
+        public static IServiceCollection AddAzureBlobStorage<TAzureBlobStorageContainer>(this IServiceCollection services) where TAzureBlobStorageContainer : AzureBlobStorageContainerBase
         {
-            services.AddTransient<TAzureBlobStorageContainerBase>();
+            services.AddTransient<IAzureBlobStorageContainer, TAzureBlobStorageContainer>();
 
             services.AddTransient<IStorageService, AzureBlobStorageService>();
 
