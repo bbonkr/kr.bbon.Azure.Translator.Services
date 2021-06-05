@@ -6,13 +6,26 @@ using System.Threading.Tasks;
 
 namespace kr.bbon.Azure.Translator.Services.Strategies
 {
+    /// <summary>
+    /// Translated document naming strategy
+    /// </summary>
     public interface ITranslatedDocumentNamingStrategy
     {
+        /// <summary>
+        /// Get translated document name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="languageCode"></param>
+        /// <returns></returns>
         string GetTranslatedDocumentName(string name, string languageCode);
     }
 
+    /// <summary>
+    /// Default translated document naming strategy
+    /// </summary>
     public class TranslatedDocumentNamingStrategy: ITranslatedDocumentNamingStrategy
     {
+        /// <inheritdoc />
         public string GetTranslatedDocumentName(string name, string languageCode)
         {
             var (fileName, extension) = GetNameToken(name);

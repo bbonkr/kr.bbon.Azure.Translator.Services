@@ -1,0 +1,506 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>kr.bbon.Azure.Translator.Services</name>
+    </assembly>
+    <members>
+        <member name="T:kr.bbon.Azure.Translator.Services.AzureStorageOptions">
+            <summary>
+            Represent AzureStorage at appsettings.json
+            </summary>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "AzureStorage": {
+                    "ConnectionString": "Your azure blob storage connection string"
+                },
+            }
+            </code>
+            </example>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.AzureTranslatorOptions">
+            <summary>
+            Represent Translator at appsettings.json
+            </summary>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "Translator": {
+                    "ResourceName": "Your Azure Translator resource name",
+                    "Endpoint":"Your Azure Translator endporint",
+                    "Region": "Your Azure Translator region",
+                    "SubscriptionKey": "Your Azure Translator subscription key"
+                }
+            }
+            </code>
+            </example>    
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.DocumentTranslationJobStatusResponseModel.Id">
+            <summary>
+            작업의 Id입니다.
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.DocumentTranslationJobStatusResponseModel.CreatedDateTimeUtc">
+            <summary>
+            작업을 만든 날짜 시간
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.DocumentTranslationJobStatusResponseModel.LastActionDateTimeUtc">
+            <summary>
+            작업 상태가 업데이트 된 날짜 시간
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.DocumentTranslationJobStatusResponseModel.Status">
+            <summary>
+            작업 또는 문서에 대한 가능한 상태 목록
+            <para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.JobStatus"/> 에 정의된 상태 문자열을 참조하세요.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.DocumentTranslationJobStatusResponseModel.Error">
+            <summary>
+            여기에는 오류 코드, 메시지, 세부 정보, 대상 및 자세한 설명이 포함 된 내부 오류와 함께 외부 오류가 있습니다.
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.ErrorV2.Target">
+            <summary>
+            오류의 소스를 가져옵니다.
+            <para>
+            예를 들어 잘못 된 문서가 있는 경우 "문서" 또는 "문서 id"가 될 수 있습니다.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.Cancelled">
+            <summary>
+            취소 횟수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.Failed">
+            <summary>
+            실패 수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.InProgress">
+            <summary>
+            진행 중인 수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.NotYetStarted">
+            <summary>
+            아직 시작 되지 않은 수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.Success">
+            <summary>
+            성공 수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.Total">
+            <summary>
+            총 개수
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.GetJobStatus.StatusSummary.TotalCharacterCharged">
+            <summary>
+            API로 청구 되는 총 문자
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.DocumentTranslationRequestModel.Inputs">
+            <summary>
+            문서 또는 문서를 포함 하는 폴더의 입력 목록
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.BatchInput">
+            <summary>
+            입력 일괄 처리 변환 요청에 대한 정의
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.BatchInput.Source">
+            <summary>
+            입력 문서의 원본
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.BatchInput.StorageType">
+            <summary>
+            입력 문서 원본 문자열의 저장소 유형입니다.
+            <para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageInputTypes"/> 형식에서 제공하는 상수를 확인하세요.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.BatchInput.Targets">
+            <summary>
+            출력의 대상 위치입니다.
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.SourceInput">
+            <summary>
+            입력 문서의 원본
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.SourceInput.Language">
+            <summary>
+            <para>언어코드</para>
+            <para>
+            언어 코드 지정 하지 않을 경우 문서에서 자동 검색을 수행 합니다.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.SourceInput.SourceUrl">
+            <summary>
+            문서를 포함 하는 폴더/컨테이너 또는 단일 파일의 위치
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.SourceInput.StorageSource">
+            <summary>
+            <para>
+            저장소 원본
+            </para>
+            <para>
+            Storage source
+            </para>
+            <para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageSources"/> 형식에서 제공하는 상수를 확인하세요.
+            </para>
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput">
+            <summary>
+            완성 된 번역 문서의 대상
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput.Category">
+            <summary>
+            번역 요청에 대 한 범주/사용자 지정 시스템
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput.Glossaries">
+            <summary>
+            용어집 목록
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput.Language">
+            <summary>
+            대상 언어
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput.StorageSource">
+            <summary>
+            저장소 원본
+            <para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageSources"/> 형식에서 제공하는 상수를 확인하세요.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.TargetInput.TargetUrl">
+            <summary>
+            문서를 포함 하는 폴더/컨테이너의 위치
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Filter.Prefix">
+            <summary>
+            변환을 위해 소스 경로에서 문서를 필터링 하는 대/소문자를 구분 하는 접두사 문자열입니다. 
+            <para>
+            예를 들어 Azure storage blob Uri를 사용 하는 경우 접두사를 사용 하 여 번역을 위해 하위 폴더를 제한 합니다.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Filter.Suffix">
+            <summary>
+            변환을 위해 소스 경로에서 문서를 필터링 하는 대/소문자를 구분 하는 접미사 문자열입니다. 
+            <para>
+            일반적으로 파일 확장명에 사용 됩니다.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Glossary.Format">
+            <summary>
+            형식
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Glossary.GlossaryUrl">
+            <summary>
+            용어집의 위치입니다. 
+            <para>Format 매개 변수가 제공 되지 않은 경우 파일 확장명을 사용 하 여 서식 지정을 추출 합니다.</para>
+            <para>용어집에 번역 언어 쌍이 없으면 적용 되지 않습니다.</para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Glossary.StorageSource">
+            <summary>
+            저장소 원본
+            <para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageSources"/> 형식에서 제공하는 상수를 확인하세요.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.Glossary.Version">
+            <summary>
+            버전
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageSources">
+            <summary>
+            저장소 원본
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.StorageInputTypes">
+            <summary>
+            입력 문서 원본 문자열의 저장소 유형입니다.
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.DocumentTranslationResponseModel.Id">
+            <summary>
+            Translation job id
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.DocumentTranslation.TranslationRequest.DocumentTranslationResponseModel.OperationLocation">
+            <summary>
+            Translation job Uri
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.Input">
+            <summary>
+            The string to translate.
+            </summary>
+        </member>
+        <member name="M:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.Input.#ctor(System.String)">
+            <summary>
+            The string to translate.
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.Inputs">
+            <summary>
+            Required
+            <para>
+            Each array element is the string to translate.
+            </para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.Input"/>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.ToLanguages">
+            <summary>
+            Required
+            <para>
+            Specifies the language of the output text. The target language must be one of the supported languages included in the translation scope. For example, use to=de to translate to German. It's possible to translate to multiple languages simultaneously by repeating the parameter in the query string. For example, use to=de&amp;to=it to translate to German and Italian.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.FromLanguage">
+            <summary>
+            Optional 
+            <para>
+            Specifies the language of the input text. Find which languages are available to translate from by looking up supported languages using the translation scope. If the from parameter is not specified, automatic language detection is applied to determine the source language.
+            </para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.TextType">
+            <summary>
+            Optional
+            <para>
+            Defines whether the text being translated is plain text or HTML text. Any HTML needs to be a well-formed, complete element. Possible values are: plain (default) or html.
+            </para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTypes" />
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.Category">
+            <summary>
+            Optional
+            <para>
+            A string specifying the category (domain) of the translation. This parameter is used to get translations from a customized system built with Custom Translator. Add the Category ID from your Custom Translator project details to this parameter to use your deployed customized system. Default value is: general.
+            </para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.Categories"/>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.ProfanityAction">
+            <summary>
+            Optional
+            <para>
+            Specifies how profanities should be treated in translations. Possible values are: NoAction (default), Marked or Deleted. To understand ways to treat profanity,
+            </para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.ProfanityActions"/>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.ProfanityMarker">
+            <summary>
+            Optional
+            <para>
+            Specifies how profanities should be marked in translations. Possible values are: Asterisk (default) or Tag. To understand ways to treat profanity
+            </para>
+            <see cref="T:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.ProfanityMarkers"/>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.Models.TextTranslation.TranslationRequest.TextTranslationRequestModel.IsTranslationEachLanguage">
+            <summary>
+            If true, request translate each language, otherwise request at one time.
+            <para>각 언어별 변역 요청 여부를 나타냅니다.</para>
+            </summary>
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.ServiceBase.Tag">
+            <summary>
+            User defined logger Category 
+            </summary>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Strategies.ITranslatedDocumentNamingStrategy">
+            <summary>
+            Translated document naming strategy
+            </summary>
+        </member>
+        <member name="M:kr.bbon.Azure.Translator.Services.Strategies.ITranslatedDocumentNamingStrategy.GetTranslatedDocumentName(System.String,System.String)">
+            <summary>
+            Get translated document name
+            </summary>
+            <param name="name"></param>
+            <param name="languageCode"></param>
+            <returns></returns>
+        </member>
+        <member name="T:kr.bbon.Azure.Translator.Services.Strategies.TranslatedDocumentNamingStrategy">
+            <summary>
+            Default translated document naming strategy
+            </summary>
+        </member>
+        <member name="M:kr.bbon.Azure.Translator.Services.Strategies.TranslatedDocumentNamingStrategy.GetTranslatedDocumentName(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="P:kr.bbon.Azure.Translator.Services.TranslatorServiceBase.Route">
+            <summary>
+            Api route
+            <para>
+            Route must start a '/'
+            </para>
+            </summary>
+        </member>
+        <member name="M:kr.bbon.Azure.Translator.Services.TranslatorServiceBase.GetApiUrl">
+            <summary>
+            Api base url
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions">
+            <summary>
+            IServiceCollection extension
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.ConfigureAzureTranslator(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Configure Azure Translator options
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "Translator": {
+                    "ResourceName": "Your Azure Translator resource name",
+                    "Endpoint":"Your Azure Translator endporint",
+                    "Region": "Your Azure Translator region",
+                    "SubscriptionKey": "Your Azure Translator subscription key"
+                }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.ConfigureAzureBlobStorage(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Configure Azure Blob Storage options
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "AzureStorage": {
+                    "ConnectionString": "Your azure blob storage connection string"
+                },
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureTextTranslatorService(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Add transient service of <see cref="T:kr.bbon.Azure.Translator.Services.ITextTranslatorService"/>
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureBlobStorage``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Add transient service of <see cref="T:kr.bbon.Azure.Translator.Services.IStorageService"/> with <see cref="T:kr.bbon.Azure.Translator.Services.AzureBlobStorageContainerBase"/>
+            </summary>
+            <typeparam name="TAzureBlobStorageContainer"></typeparam>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddDefaultAzureBlobStorage(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Add transient service of <see cref="T:kr.bbon.Azure.Translator.Services.IStorageService"/> with <see cref="T:kr.bbon.Azure.Translator.Services.DocumentTranslationAzureBlobStorageContainer"/>
+            <para>
+            Azure BLOB storage container name is `document-translation`.
+            </para>
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureDocumentTranslatorService(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Add transient service of <see cref="T:kr.bbon.Azure.Translator.Services.IDocumentTranslationService"/>
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureDocumentTranslationBlobNamingStrategy(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Add transient service of <see cref="T:kr.bbon.Azure.Translator.Services.Strategies.ITranslatedDocumentNamingStrategy"/>
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureTranslatorServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            <para>You will use Text translation and document translation</para>
+            Configure Azure translation options <see cref="T:kr.bbon.Azure.Translator.Services.AzureTranslatorOptions"/> and Azure BLOB storage options <see cref="T:kr.bbon.Azure.Translator.Services.AzureStorageOptions"/>, Add transient of <see cref="T:kr.bbon.Azure.Translator.Services.ITextTranslatorService"/>, <see cref="T:kr.bbon.Azure.Translator.Services.IStorageService"/>, <see cref="T:kr.bbon.Azure.Translator.Services.Strategies.ITranslatedDocumentNamingStrategy"/>, <see cref="T:kr.bbon.Azure.Translator.Services.DocumentTranslationAzureBlobStorageContainer"/>, <see cref="T:kr.bbon.Azure.Translator.Services.IDocumentTranslationService"/>
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "AzureStorage": {
+                    "ConnectionString": "Your azure blob storage connection string"
+                },
+                "Translator": {
+                    "ResourceName": "Your Azure Translator resource name",
+                    "Endpoint":"Your Azure Translator endporint",
+                    "Region": "Your Azure Translator region",
+                    "SubscriptionKey": "Your Azure Translator subscription key"
+                }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAzureTextTranslatorServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            <para>You will use Text translation only</para>
+            Configure Azure translation options <see cref="T:kr.bbon.Azure.Translator.Services.AzureTranslatorOptions"/>, Add transient of <see cref="T:kr.bbon.Azure.Translator.Services.ITextTranslatorService"/>
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+            <example>Input appsettings.json as below
+            <code>
+            {
+                "Translator": {
+                    "ResourceName": "Your Azure Translator resource name",
+                    "Endpoint":"Your Azure Translator endporint",
+                    "Region": "Your Azure Translator region",
+                    "SubscriptionKey": "Your Azure Translator subscription key"
+                }
+            }
+            </code>
+            </example>
+        </member>
+    </members>
+</doc>
