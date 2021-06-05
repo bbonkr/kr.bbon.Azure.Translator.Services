@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using kr.bbon.Azure.Translator.Services;
+using kr.bbon.Azure.Translator.Services.Strategies;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -116,8 +117,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Add transient service of <see cref="ITranslatedDocumentNamingStrategy"/>
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddAzureDocumentTranslationBlobNamingStrategy(this IServiceCollection services)
+        {
+            services.AddTransient<ITranslatedDocumentNamingStrategy, TranslatedDocumentNamingStrategy>();
+
+            return services;
+        }
+
+        /// <summary>
         /// <para>You will use Text translation and document translation</para>
-        /// Configure Azure translation options <see cref="AzureTranslatorOptions"/> and Azure BLOB storage options <see cref="AzureStorageOptions"/>, Add transient of <see cref="DocumentTranslationAzureBlobStorageContainer"/>, <see cref="ITextTranslatorService"/>, <see cref="IDocumentTranslationService"/>
+        /// Configure Azure translation options <see cref="AzureTranslatorOptions"/> and Azure BLOB storage options <see cref="AzureStorageOptions"/>, Add transient of <see cref="ITextTranslatorService"/>, <see cref="IStorageService"/>, <see cref="ITranslatedDocumentNamingStrategy"/>, <see cref="DocumentTranslationAzureBlobStorageContainer"/>, <see cref="IDocumentTranslationService"/>
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
@@ -139,12 +152,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </example>
         public static IServiceCollection AddAzureTranslatorServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureAzureTranslator(configuration);
-            services.ConfigureAzureBlobStorage(configuration);
-
-            services.AddDefaultAzureBlobStorage();
-            services.AddAzureTextTranslatorService();
-            services.AddAzureDocumentTranslatorService();
+            services.ConfigureAzureTranslator(configuration)
+                .ConfigureAzureBlobStorage(configuration)
+                .AddAzureDocumentTranslationBlobNamingStrategy()
+                .AddDefaultAzureBlobStorage()
+                .AddAzureTextTranslatorService()
+                .AddAzureDocumentTranslatorService();
 
             return services;
         }
