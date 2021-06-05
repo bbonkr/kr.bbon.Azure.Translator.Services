@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <PackageId>kr.bbon.Azure.Translator.Services</PackageId>
         <Title>kr.bbon.Azure.Translator.Services</Title>
-        <Version>1.0.3</Version>
+        <Version>1.0.4</Version>
         <Authors>Pon Cheol Ku (bbon@live.com)</Authors>
         <Company>bbon.kr</Company>
         <Copyright>bbon.kr. All rights reserved.</Copyright>

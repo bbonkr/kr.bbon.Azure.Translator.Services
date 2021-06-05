@@ -14,7 +14,7 @@ namespace kr.bbon.Azure.Translator.Services
 
         public TranslatorServiceBase(IOptionsMonitor<AzureTranslatorOptions> azureTranslatorConnectionOptionsAccessor)
         {
-            options = azureTranslatorConnectionOptionsAccessor.CurrentValue;
+            options = azureTranslatorConnectionOptionsAccessor.CurrentValue ?? throw new ArgumentException($"Does not configure 'Translator' at appsettings. See AzureStorageOptions information.");
             errorMessages = new List<string>();
         }
 
