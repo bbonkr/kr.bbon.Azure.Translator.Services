@@ -29,7 +29,9 @@
                     "ResourceName": "Your Azure Translator resource name",
                     "Endpoint":"Your Azure Translator endporint",
                     "Region": "Your Azure Translator region",
-                    "SubscriptionKey": "Your Azure Translator subscription key"
+                    "SubscriptionKey": "Your Azure Translator subscription key",
+                    "SourceBlobContainerName": "Source blob container name",
+                    "TargetBlobContainerName": "Target blob container name"
                 }
             }
             </code>
