@@ -6,6 +6,10 @@
 
 Azure Translator 를 사용한 번역 서비스입니다.
 
+[nuget: Azure.AI.Translation.Document](https://www.nuget.org/packages/Azure.AI.Translation.Document) 패키지가 출시되었습니다.
+
+해당 패키지를 사용하시는 것으로 권장합니다.
+
 ## 사전요구사항
 
 * [Azure 계정](https://azure.microsoft.com/free)
@@ -63,7 +67,9 @@ appsettings.json 에서 설정을 제공합니다.
         "Endpoint": "endpoint here",
         "SubscriptionKey": "subscription key here",
         "Region": "region here",
-        "ResourceName": "name of resource"
+        "ResourceName": "name of resource",
+        "SourceBlobContainerName": "Source blob container name",
+        "TargetBlobContainerName": "Target blob container name"
     },
     "AzureStorage": {
         "ConnectionString": "azure storage connection string here"
@@ -90,3 +96,17 @@ public void ConfigureServices(IServiceCollection services)
 ## 예제
 
 예제는 [bbonkr/Sample.Azure.Translator](https://github.com/bbonkr/Sample.Azure.Translator) 페이지를 참조하세요.
+
+## 변경사항
+
+### v1.1.0
+
+잘 동작하던 문서 번역기 서비스가 서버 오류가 발생하고 있습니다.
+
+번역 원본, 대상으로 BLOB 항목을 사용하고 있었는데, 원본, 대상을 컨테이너로 지정하니 문제가 해결되었습니다.
+
+문서 번역 서비스에 변경사항이 있는지에 대한 설명은 현재 찾을 수 없습니다. (2021-08-04)
+
+문제없는 동작을 위해 번역 원본, 대상으로 컨테이너 SAS URI 를 지정하도록 변경합니다.
+
+RESTful api 끝점을 v1.0-preview.1 에서 v1.0 으로 변경합니다.
