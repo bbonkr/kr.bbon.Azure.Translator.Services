@@ -313,7 +313,7 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        protected override string Route { get => "/translator/text/batch/v1.0-preview.1/batches"; }
+        protected override string Route { get => "/translator/text/batch/v1.0/batches"; }
         protected override string Tag { get => "[Azure Translator: Document]"; }
 
         private readonly ILogger logger;

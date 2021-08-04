@@ -15,7 +15,9 @@ namespace kr.bbon.Azure.Translator.Services
     ///         "ResourceName": "Your Azure Translator resource name",
     ///         "Endpoint":"Your Azure Translator endporint",
     ///         "Region": "Your Azure Translator region",
-    ///         "SubscriptionKey": "Your Azure Translator subscription key"
+    ///         "SubscriptionKey": "Your Azure Translator subscription key",
+    ///         "SourceBlobContainerName": "Source blob container name",
+    ///         "TargetBlobContainerName": "Target blob container name"
     ///     }
     /// }
     /// </code>
@@ -31,5 +33,9 @@ namespace kr.bbon.Azure.Translator.Services
         public string SubscriptionKey { get; set; }
 
         public string Region { get; set; }
+
+        public string SourceBlobContainerName { get; set; }
+
+        public string TargetBlobContainerName { get; set; }
     }
 }

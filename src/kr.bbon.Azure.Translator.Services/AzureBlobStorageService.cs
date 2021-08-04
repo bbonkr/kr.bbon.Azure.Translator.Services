@@ -21,44 +21,55 @@ namespace kr.bbon.Azure.Translator.Services
 {
     public interface IStorageService
     {
-        Task<BlobCreateResultModel> FindByNameAsync(string name, CancellationToken cancellationToken = default);
+        Task<BlobCreateResultModel> FindByNameAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
 
-        Task<BlobCreateResultModel> CreateAsync(string name, Stream stream, string contentType, CancellationToken cancellationToken = default);
+        Task<BlobCreateResultModel> CreateAsync(string containerName, string blobName, Stream stream, string contentType, CancellationToken cancellationToken = default);
 
-        Task<BlobCreateResultModel> CreateAsync(string name, string contents, string contentType, CancellationToken cancellationToken = default);
+        Task<BlobCreateResultModel> CreateAsync(string containerName, string blobName, string contents, string contentType, CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteAsync(string name, CancellationToken cancellationToken = default);
+        Task<bool> DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
 
-        string GenerateBlobSasUri(string name, string storedPolicyName = "");
+        string GenerateBlobSasUri(string containerName, string blobName);
 
-        string GenerateContainerSasUri(string storedPolicyName = "");
+        string GenerateBlobSasUri(string containerName, string blobName, string storedPolicyName = "");
 
-        Task<Stream> LoadBlob(string name);
+        string GenerateBlobSasUri(string containerName, string blobName, BlobSasPermissions permissions, DateTimeOffset expiresOn, string storedPolicyName = "");
+
+        string GenerateContainerSasUri(string containerName);
+
+        string GenerateContainerSasUri(string containerName, string storedPolicyName = "");
+
+        string GenerateContainerSasUri(string containerName, BlobContainerSasPermissions permissions, DateTimeOffset expiresOn, string storedPolicyName = "");
+
+        string GenerateSourceContainerSasUri(string containerName, DateTimeOffset expiresOn);
+
+        string GenerateTargetContainerSasUri(string containerName, DateTimeOffset expiresOn);
+
+        Task<Stream> LoadBlobAsync(string containerName, string name, CancellationToken cancellationToken = default);
     }
 
    
     public class AzureBlobStorageService : IStorageService
     {
         public AzureBlobStorageService(
-            IAzureBlobStorageContainer azureBlobStorageContainer,
-            IOptionsMonitor<AzureStorageOptions> azureStorageOptionsAccessor, 
+            IOptionsMonitor<AzureStorageOptions> azureStorageOptionsAccessor,
             ILoggerFactory loggerFactory)
         {
-            this.azureBlobStorageContainer = azureBlobStorageContainer;
             this.options = azureStorageOptionsAccessor.CurrentValue ?? throw new ArgumentException($"Does not configure 'AzureStorage' at appsettings. See AzureBlobStorageOptions information.");
             this.logger = loggerFactory.CreateLogger<AzureBlobStorageService>();
-
-            this.client = new BlobContainerClient(options.ConnectionString, azureBlobStorageContainer.GetContainerName());
+            client = new BlobServiceClient(options.ConnectionString);
         }
 
-        public async Task<BlobCreateResultModel> FindByNameAsync(string name, CancellationToken cancellationToken = default)
+        public async Task<BlobCreateResultModel> FindByNameAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
         {
             var message = "";
             try
             {
-                EnsureContainerCreated();
+                var blobContainerClient = GetBlobContainerClient(containerName);
 
-                var blobClient = client.GetBlobClient(name);
+                EnsureContainerCreated(blobContainerClient);
+
+                var blobClient = blobContainerClient.GetBlobClient(blobName);
 
                 var exists = await blobClient.ExistsAsync(cancellationToken);
 
@@ -93,12 +104,33 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        public string GenerateBlobSasUri(string name, string storedPolicyName = "")
+        public string GenerateBlobSasUri(string containerName, string blobName)
+        {
+            var permissions = BlobSasPermissions.Read | BlobSasPermissions.List | BlobSasPermissions.Write;
+            var expiresOn = DateTimeOffset.UtcNow + TimeSpan.FromDays(3);
+
+            var sasUri = GenerateBlobSasUri(containerName, blobName, permissions, expiresOn);
+
+            return sasUri.ToString();
+        }
+
+        public string GenerateBlobSasUri(string containerName, string blobName, string storedPolicyName = "")
+        {
+            var permissions = BlobSasPermissions.Read | BlobSasPermissions.List | BlobSasPermissions.Write;
+            var expiresOn = DateTimeOffset.UtcNow + TimeSpan.FromDays(3);
+
+            var sasUri = GenerateBlobSasUri(containerName, blobName, permissions, expiresOn, storedPolicyName);
+
+            return sasUri.ToString();
+        }
+
+        public string GenerateBlobSasUri(string containerName, string blobName, BlobSasPermissions permissions, DateTimeOffset expiresOn, string storedPolicyName = "")
         {
             var message = "";
-            var blobClient = client.GetBlobClient(name);
+            var containerClient = GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
 
-            if (!client.CanGenerateSasUri || !blobClient.CanGenerateSasUri)
+            if (!blobClient.CanGenerateSasUri)
             {
                 message = "Could not generate the SAS uri.";
                 throw new ApiHttpStatusException<ErrorModel<int>>(HttpStatusCode.BadRequest, message, new ErrorModel<int>
@@ -108,21 +140,16 @@ namespace kr.bbon.Azure.Translator.Services
                 });
             }
 
-            var builder = new BlobSasBuilder()
+            var builder = new BlobSasBuilder(permissions, expiresOn)
             {
-                BlobContainerName = client.Name,
-                BlobName = name,
+                BlobContainerName = blobClient.BlobContainerName,
+                BlobName = blobClient.Name,
                 Resource = "b",
             };
 
-
-            if (string.IsNullOrWhiteSpace(storedPolicyName))
+            if (!string.IsNullOrWhiteSpace(storedPolicyName))
             {
-                builder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
-                builder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.List | BlobSasPermissions.Write);
-            }
-            else
-            {
+                builder = new BlobSasBuilder();
                 builder.Identifier = storedPolicyName;
             }
 
@@ -131,11 +158,31 @@ namespace kr.bbon.Azure.Translator.Services
             return sasUri.ToString();
         }
 
-        public string GenerateContainerSasUri(string storedPolicyName = "")
+        public string GenerateContainerSasUri(string containerName)
+        {
+            var permissions = BlobContainerSasPermissions.List | BlobContainerSasPermissions.Read | BlobContainerSasPermissions.Write;
+            var expiresOn = DateTimeOffset.UtcNow + TimeSpan.FromDays(3);
+
+            var sasUri = GenerateContainerSasUri(containerName, permissions, expiresOn);
+
+            return sasUri;
+        }
+
+        public string GenerateContainerSasUri(string containerName, string storedPolicyName = "")
+        {
+            var permissions = BlobContainerSasPermissions.List | BlobContainerSasPermissions.Read | BlobContainerSasPermissions.Write;
+            var expiresOn = DateTimeOffset.UtcNow + TimeSpan.FromDays(3);
+
+            var sasUri = GenerateContainerSasUri(containerName, permissions, expiresOn, storedPolicyName);
+
+            return sasUri;
+        }
+
+        public string GenerateContainerSasUri(string containerName, BlobContainerSasPermissions permissions, DateTimeOffset expiresOn, string storedPolicyName = "")
         {
             var message = "";
-
-            if (!client.CanGenerateSasUri)
+            var containerClient = GetBlobContainerClient(containerName);
+            if (!containerClient.CanGenerateSasUri)
             {
                 message = "Could not generate the SAS uri.";
                 throw new ApiHttpStatusException<ErrorModel<int>>(HttpStatusCode.BadRequest, message, new ErrorModel<int>
@@ -145,36 +192,46 @@ namespace kr.bbon.Azure.Translator.Services
                 });
             }
 
-            var builder = new BlobSasBuilder()
+            var builder = new BlobSasBuilder(permissions, expiresOn)
             {
-                BlobContainerName = client.Name,
+                BlobContainerName = containerClient.Name,
                 Resource = "c",
             };
 
-
-            if (string.IsNullOrWhiteSpace(storedPolicyName))
+            if (!string.IsNullOrWhiteSpace(storedPolicyName))
             {
-                builder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
-                builder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
-            }
-            else
-            {
+                builder = new BlobSasBuilder();
                 builder.Identifier = storedPolicyName;
             }
 
-            var sasUri = client.GenerateSasUri(builder);
-
+            var sasUri = containerClient.GenerateSasUri(builder);
 
             return sasUri.ToString();
         }
 
-        public async Task<BlobCreateResultModel> CreateAsync(string name, Stream stream, string contentType = "", CancellationToken cancellationToken = default)
+        public string GenerateSourceContainerSasUri(string containerName, DateTimeOffset expiresOn)
+        {
+            var uri = GenerateContainerSasUri(containerName, BlobContainerSasPermissions.List | BlobContainerSasPermissions.Read, expiresOn);
+
+            return uri;
+        }
+
+        public string GenerateTargetContainerSasUri(string containerName, DateTimeOffset expiresOn)
+        {
+            var uri = GenerateContainerSasUri(containerName, BlobContainerSasPermissions.List | BlobContainerSasPermissions.Write, expiresOn);
+
+            return uri;
+        }
+
+        public async Task<BlobCreateResultModel> CreateAsync(string containerName, string blobName, Stream stream, string contentType = "", CancellationToken cancellationToken = default)
         {
             try
             {
-                EnsureContainerCreated();
+                var containerClient = GetBlobContainerClient(containerName);
 
-                var blobClient = client.GetBlobClient(name);
+                EnsureContainerCreated(containerClient);
+
+                var blobClient = containerClient.GetBlobClient(blobName);
 
                 var uploadOptions = new BlobUploadOptions();
 
@@ -187,7 +244,7 @@ namespace kr.bbon.Azure.Translator.Services
 
                 return new BlobCreateResultModel
                 {
-                    ContainerName = client.Name,
+                    ContainerName = blobClient.BlobContainerName,
                     BlobName = blobClient.Name,
                     Uri = blobClient.Uri.ToString(),
                 };
@@ -200,7 +257,7 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        public async Task<BlobCreateResultModel> CreateAsync(string name, string contents, string contentType, CancellationToken cancellationToken = default)
+        public async Task<BlobCreateResultModel> CreateAsync(string containerName, string blobName, string contents, string contentType, CancellationToken cancellationToken = default)
         {
             BlobCreateResultModel result;
 
@@ -213,7 +270,7 @@ namespace kr.bbon.Azure.Translator.Services
                     
                     stream.Position = 0;
 
-                    result = await CreateAsync(name, stream, contentType, cancellationToken);
+                    result = await CreateAsync(containerName, blobName, stream, contentType, cancellationToken);
 
                     writer.Close();
                 }                
@@ -224,14 +281,25 @@ namespace kr.bbon.Azure.Translator.Services
             return result;
         }
 
-        public async Task<bool> DeleteAsync(string name, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
         {
             var message = "";
             try
             {
-                EnsureContainerCreated();
+                var containerClient = GetBlobContainerClient(containerName);
 
-                var blobClient = client.GetBlobClient(name);
+                var isContainerExsits = await containerClient.ExistsAsync(cancellationToken);
+                if (!isContainerExsits)
+                {
+                    message = "Could not find a container.";
+                    throw new ApiHttpStatusException<ErrorModel<int>>(HttpStatusCode.NotFound, message, new ErrorModel<int>
+                    {
+                        Code = (int)HttpStatusCode.NotFound,
+                        Message = message,
+                    });
+                }
+
+                var blobClient = containerClient.GetBlobClient(blobName);
 
                 var exists = await blobClient.ExistsAsync(cancellationToken);
 
@@ -249,8 +317,7 @@ namespace kr.bbon.Azure.Translator.Services
                         Code = (int)HttpStatusCode.NotFound,
                         Message = message,
                     });
-                }
-                
+                }                
             }
             catch (Exception ex)
             {
@@ -260,27 +327,34 @@ namespace kr.bbon.Azure.Translator.Services
             }
         }
 
-        public async Task<Stream> LoadBlob(string name)
+        public async Task<Stream> LoadBlobAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
         {
-            var blobClient = client.GetBlobClient(name);
+            var containerClient = GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
 
-            if (await blobClient.ExistsAsync())
+            if (await blobClient.ExistsAsync(cancellationToken))
             {
-                var result = await blobClient.DownloadAsync();
+                var result = await blobClient.DownloadAsync(cancellationToken);
                 return result.Value.Content;
             }
 
             return null;
         }
 
-        private void EnsureContainerCreated()
+        private void EnsureContainerCreated(BlobContainerClient blobContainerClient)
         {
-            client.CreateIfNotExists(PublicAccessType.BlobContainer);
+            blobContainerClient.CreateIfNotExists(PublicAccessType.BlobContainer);
+        }
+
+        private BlobContainerClient GetBlobContainerClient(string containerName)
+        {
+            var blobContainerClient = client.GetBlobContainerClient(containerName);
+
+            return blobContainerClient;
         }
 
         private readonly AzureStorageOptions options;
-        private readonly BlobContainerClient client;
-        private readonly IAzureBlobStorageContainer azureBlobStorageContainer;
+        private readonly BlobServiceClient client;
         private readonly ILogger logger;
     }
 }
